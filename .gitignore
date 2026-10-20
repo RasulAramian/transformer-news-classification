@@ -16,3 +16,4 @@ models/*.safetensors
 
 # Fine-tuned DistilBERT model is hosted on Hugging Face
 /models/distilbert-ag-news/
+vendor/
