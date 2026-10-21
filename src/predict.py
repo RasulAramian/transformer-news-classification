@@ -11,20 +11,20 @@ class NewsPredictor:
     """Predict news categories using the saved classification models."""
 
     def __init__(self):
-        # Load both trained models once per predictor instance
+        # Load the lightweight model first.
         self.lr_model, self.vectorizer = load_logistic_regression()
-        self.bert_model, self.tokenizer, self.device = load_distilbert()
+
+        # Load DistilBERT only when it is requested.
+        self.bert_model = None
+        self.tokenizer = None
+        self.device = None
 
     def predict_with_logistic_regression(self, text):
         """Predict a news category using TF-IDF and Logistic Regression."""
 
-        # Validate and normalize input text
         text = normalize_text(text)
-
-        # Convert text into TF-IDF features
         features = self.vectorizer.transform([text])
 
-        # Predict category and probabilities
         prediction = int(self.lr_model.predict(features)[0])
         probabilities = self.lr_model.predict_proba(features)[0]
 
@@ -37,10 +37,12 @@ class NewsPredictor:
     def predict_with_distilbert(self, text):
         """Predict a news category using DistilBERT."""
 
-        # Validate and normalize input text
+        # Load DistilBERT on the first request that needs it.
+        if self.bert_model is None:
+            self.bert_model, self.tokenizer, self.device = load_distilbert()
+
         text = normalize_text(text)
 
-        # Tokenize the input text
         inputs = self.tokenizer(
             text,
             return_tensors="pt",
@@ -48,12 +50,10 @@ class NewsPredictor:
             max_length=128,
         ).to(self.device)
 
-        # Run inference without calculating gradients
         with torch.inference_mode():
             outputs = self.bert_model(**inputs)
             probabilities = torch.softmax(outputs.logits, dim=-1)[0]
 
-        # Select the category with the highest probability
         prediction = int(probabilities.argmax().item())
 
         return {
