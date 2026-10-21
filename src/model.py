@@ -5,12 +5,11 @@ import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 
-# Project paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = PROJECT_ROOT / "models"
 
 LOGISTIC_REGRESSION_DIR = MODELS_DIR / "logistic_regression"
-DISTILBERT_DIR = MODELS_DIR / "distilbert-ag-news"
+DISTILBERT_MODEL_ID = "RasulAramian/distilbert-ag-news"
 
 
 def load_logistic_regression():
@@ -26,16 +25,12 @@ def load_logistic_regression():
 
 
 def load_distilbert():
-    """Load the fine-tuned DistilBERT model and tokenizer."""
+    """Load the fine-tuned DistilBERT model and tokenizer from Hugging Face."""
 
-    tokenizer = AutoTokenizer.from_pretrained(
-        str(DISTILBERT_DIR),
-        local_files_only=True,
-    )
+    tokenizer = AutoTokenizer.from_pretrained(DISTILBERT_MODEL_ID)
 
     model = AutoModelForSequenceClassification.from_pretrained(
-        str(DISTILBERT_DIR),
-        local_files_only=True,
+        DISTILBERT_MODEL_ID
     )
 
     device = torch.device("cpu")
