@@ -29,7 +29,7 @@ app = FastAPI(
 
 class PredictionRequest(BaseModel):
     text: str = Field(min_length=1, max_length=10000)
-    model: str = Field(default="distilbert")
+    model: str = Field(default="logistic_regression")
 
 
 @app.get("/health")
