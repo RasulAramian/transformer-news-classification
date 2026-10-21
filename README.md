@@ -138,14 +138,43 @@ model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
 
 ## API and Deployment
 
-The project includes a FastAPI application for model inference.
+The project includes a FastAPI application for news classification.
 
-The API provides:
+### Live Deployment (Render)
 
-- `/health` — Application health and model-loading status.
-- `/predict` — News classification predictions.
+The API is deployed on Render and provides the following endpoints:
 
-The application can be containerized using Docker.
+- **Live API:** https://transformer-news-classification.onrender.com
+- **Interactive API documentation:** https://transformer-news-classification.onrender.com/docs
+- **Health check:** https://transformer-news-classification.onrender.com/health
+- **Fine-tuned DistilBERT model:** https://huggingface.co/RasulAramian/distilbert-ag-news
+
+The deployed API has been tested using the Logistic Regression model.
+The DistilBERT model is published separately on Hugging Face. Its inference
+on the free Render instance has not been verified.
+
+### Example Prediction
+
+Open the [interactive API documentation](https://transformer-news-classification.onrender.com/docs), select `POST /predict`, and use the following request:
+
+```json
+{
+  "text": "Apple announced a new product with advanced artificial intelligence technology.",
+  "model": "logistic_regression"
+}
+```
+
+Example response from a successful prediction:
+
+```json
+{
+  "model": "logistic_regression",
+  "label": "Sci/Tech",
+  "confidence": 0.9764647686824888
+}
+```
+
+The predicted label and confidence depend on the input text.
 
 ### Local Development
 
